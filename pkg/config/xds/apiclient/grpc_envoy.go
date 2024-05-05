@@ -24,7 +24,6 @@ import (
 )
 
 import (
-	"dubbo.apache.org/dubbo-go/v3/common/logger"
 	"github.com/dubbo-go-pixiu/pixiu-api/pkg/xds"
 	xdspb "github.com/dubbo-go-pixiu/pixiu-api/pkg/xds/model"
 	clusterpb "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
@@ -41,6 +40,7 @@ import (
 )
 
 import (
+	"github.com/apache/dubbo-go-pixiu/pkg/logger"
 	"github.com/apache/dubbo-go-pixiu/pkg/model"
 )
 
