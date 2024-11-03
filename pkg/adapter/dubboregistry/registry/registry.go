@@ -37,15 +37,31 @@ import (
 
 type RegisteredType int8
 
+var RegisteredTypes = []string{"application", "interface"}
+
 const (
 	RegisteredTypeApplication RegisteredType = iota
 	RegisteredTypeInterface
+
+	RegisteredTypeApplicationName = "application"
+	RegisteredTypeInterfaceName   = "interface"
 )
 
 var registryMap = make(map[string]func(model.Registry, common2.RegistryEventListener) (Registry, error), 8)
 
 func (t *RegisteredType) String() string {
-	return []string{"application", "interface"}[*t]
+	return RegisteredTypes[*t]
+}
+
+func RegisterTypeFromName(name string) RegisteredType {
+	switch name {
+	case RegisteredTypeApplicationName:
+		return RegisteredTypeApplication
+	case RegisteredTypeInterfaceName:
+		return RegisteredTypeInterface
+	default:
+		return RegisteredTypeInterface
+	}
 }
 
 // Registry interface defines the basic features of a registry
@@ -134,11 +150,7 @@ func ParseDubboString(urlString string) (config.DubboBackendConfig, []string, st
 
 // GetAPIPattern generate the API path pattern. /application/interface/version
 func GetAPIPattern(bkConfig config.DubboBackendConfig) string {
-	if bkConfig.Version == "" {
-		// if the version is empty, make sure the url path is valid.
-		return strings.Join([]string{"/" + bkConfig.ApplicationName, bkConfig.Interface}, constant.PathSlash)
-	}
-	return strings.Join([]string{"/" + bkConfig.ApplicationName, bkConfig.Interface, bkConfig.Version}, constant.PathSlash)
+	return strings.Join([]string{"/" + bkConfig.ApplicationName, bkConfig.Interface}, constant.PathSlash)
 }
 
 func GetRouter() model.Router {

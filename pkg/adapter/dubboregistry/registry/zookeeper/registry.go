@@ -23,16 +23,18 @@ import (
 )
 
 import (
-	"github.com/pkg/errors"
-)
+	dubboCommon "dubbo.apache.org/dubbo-go/v3/common"
 
-import (
+	hessian "github.com/apache/dubbo-go-hessian2"
+
 	"github.com/apache/dubbo-go-pixiu/pkg/adapter/dubboregistry/common"
 	"github.com/apache/dubbo-go-pixiu/pkg/adapter/dubboregistry/registry"
 	baseRegistry "github.com/apache/dubbo-go-pixiu/pkg/adapter/dubboregistry/registry/base"
 	zk "github.com/apache/dubbo-go-pixiu/pkg/adapter/dubboregistry/remoting/zookeeper"
 	"github.com/apache/dubbo-go-pixiu/pkg/common/constant"
 	"github.com/apache/dubbo-go-pixiu/pkg/model"
+
+	"github.com/pkg/errors"
 )
 
 var (
@@ -49,6 +51,9 @@ const (
 
 func init() {
 	registry.SetRegistry(constant.Zookeeper, newZKRegistry)
+	hessian.RegisterPOJO(&dubboCommon.MetadataInfo{})
+	hessian.RegisterPOJO(&dubboCommon.ServiceInfo{})
+	hessian.RegisterPOJO(&dubboCommon.URL{})
 }
 
 type ZKRegistry struct {
@@ -61,7 +66,7 @@ var _ registry.Registry = new(ZKRegistry)
 
 func newZKRegistry(regConfig model.Registry, adapterListener common.RegistryEventListener) (registry.Registry, error) {
 	var zkReg = &ZKRegistry{}
-	baseReg := baseRegistry.NewBaseRegistry(zkReg, adapterListener)
+	baseReg := baseRegistry.NewBaseRegistry(zkReg, adapterListener, registry.RegisterTypeFromName(regConfig.RegistryType))
 	timeout, err := time.ParseDuration(regConfig.Timeout)
 	if err != nil {
 		return nil, errors.Errorf("Incorrect timeout configuration: %s", regConfig.Timeout)
@@ -73,13 +78,16 @@ func newZKRegistry(regConfig model.Registry, adapterListener common.RegistryEven
 	client.RegisterHandler(eventChan)
 	zkReg.BaseRegistry = baseReg
 	zkReg.client = client
-	initZKListeners(zkReg)
+	zkReg.zkListeners = make(map[registry.RegisteredType]registry.Listener)
+	switch zkReg.RegisteredType {
+	case registry.RegisteredTypeInterface:
+		zkReg.zkListeners[zkReg.RegisteredType] = newZKIntfListener(zkReg.client, zkReg, zkReg.AdapterListener)
+	case registry.RegisteredTypeApplication:
+		zkReg.zkListeners[zkReg.RegisteredType] = newZkAppListener(zkReg.client, zkReg, zkReg.AdapterListener)
+	default:
+		return nil, errors.Errorf("Unsupported registry type: %s", regConfig.RegistryType)
+	}
 	return zkReg, nil
-}
-
-func initZKListeners(reg *ZKRegistry) {
-	reg.zkListeners = make(map[registry.RegisteredType]registry.Listener)
-	reg.zkListeners[registry.RegisteredTypeInterface] = newZKIntfListener(reg.client, reg, reg.AdapterListener)
 }
 
 func (r *ZKRegistry) GetClient() *zk.ZooKeeperClient {
@@ -96,7 +104,7 @@ func (r *ZKRegistry) DoSubscribe() error {
 
 // To subscribe service level service discovery
 func (r *ZKRegistry) interfaceSubscribe() error {
-	intfListener, ok := r.zkListeners[registry.RegisteredTypeInterface]
+	intfListener, ok := r.zkListeners[r.RegisteredType]
 	if !ok {
 		return errors.New("Listener for interface level registration does not initialized")
 	}
@@ -106,7 +114,7 @@ func (r *ZKRegistry) interfaceSubscribe() error {
 
 // DoUnsubscribe stops monitoring the target registry.
 func (r *ZKRegistry) DoUnsubscribe() error {
-	intfListener, ok := r.zkListeners[registry.RegisteredTypeInterface]
+	intfListener, ok := r.zkListeners[r.RegisteredType]
 	if !ok {
 		return errors.New("Listener for interface level registration does not initialized")
 	}

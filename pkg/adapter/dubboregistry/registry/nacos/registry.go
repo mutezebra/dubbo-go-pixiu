@@ -45,7 +45,7 @@ type NacosRegistry struct {
 }
 
 func (n *NacosRegistry) DoSubscribe() error {
-	intfListener, ok := n.nacosListeners[registry.RegisteredTypeInterface]
+	intfListener, ok := n.nacosListeners[n.RegisteredType]
 	if !ok {
 		return errors.New("Listener for interface level registration does not initialized")
 	}
@@ -91,9 +91,14 @@ func newNacosRegistry(regConfig model.Registry, adapterListener common.RegistryE
 		client:         client,
 		nacosListeners: make(map[registry.RegisteredType]registry.Listener),
 	}
-	nacosRegistry.nacosListeners[registry.RegisteredTypeInterface] = newNacosIntfListener(client, nacosRegistry, &regConfig, adapterListener)
-
-	baseReg := baseRegistry.NewBaseRegistry(nacosRegistry, adapterListener)
-	nacosRegistry.BaseRegistry = baseReg
-	return baseReg, nil
+	nacosRegistry.BaseRegistry = baseRegistry.NewBaseRegistry(nacosRegistry, adapterListener, registry.RegisterTypeFromName(regConfig.RegistryType))
+	switch nacosRegistry.RegisteredType {
+	case registry.RegisteredTypeInterface:
+		nacosRegistry.nacosListeners[nacosRegistry.RegisteredType] = newNacosIntfListener(client, nacosRegistry, &regConfig, adapterListener)
+	//case registry.RegisteredTypeApplication:
+	//nacosRegistry.nacosListeners[nacosRegistry.RegisteredType] = newZkAppListener(zkReg.client, zkReg, zkReg.AdapterListener)
+	default:
+		return nil, errors.Errorf("Unsupported registry type: %s", regConfig.RegistryType)
+	}
+	return nacosRegistry, nil
 }
