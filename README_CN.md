@@ -73,7 +73,7 @@ cd dubbogo/simple
 使用下列命令来手动启动 pixiu
 
 ```shell
- go run cmd/pixiu/*.go gateway start -c /[absolute-path]/dubbo-go-pixiu/samples/dubbogo/simple/direct/pixiu/conf.yaml
+ go run cmd/pixiu/*.go gateway start -c /[absolute-path]/dubbo-go-pixiu-samples/dubbogo/simple/direct/pixiu/conf.yaml
 ```
 
 如果希望启用wasm ,使用下列命令来手动启动 pixiu
@@ -86,7 +86,7 @@ go build -tags wasm -o pixiu cmd/pixiu/*.go
 
 ```shell
 go build cmd/pixiu/*.go
-./pixiu gateway start -c /[absolute-path]/dubbo-go-pixiu/samples/dubbogo/simple/direct/pixiu/conf.yaml
+./pixiu gateway start -c /[absolute-path]/dubbo-go-pixiu-samples/dubbogo/simple/direct/pixiu/conf.yaml
 ```
 
 #### 尝试请求

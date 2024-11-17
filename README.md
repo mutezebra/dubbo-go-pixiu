@@ -74,7 +74,7 @@ if prepare config file manually, notice:
 if run pixiu manually in pixiu project, use command as below.
 
 ```shell
- go run cmd/pixiu/*.go gateway start -c /[absolute-path]/dubbo-go-pixiu/samples/dubbogo/simple/direct/pixiu/conf.yaml
+ go run cmd/pixiu/*.go gateway start -c /[absolute-path]/dubbo-go-pixiu-samples/dubbogo/simple/direct/pixiu/conf.yaml
 ```
 
 if run pixiu manually in pixiu project and wasm feature, use command as below.
@@ -89,7 +89,7 @@ run pixiu app binary
 
 ```shell
 go build cmd/pixiu/*.go
-./pixiu gateway start -c /[absolute-path]/dubbo-go-pixiu/samples/dubbogo/simple/direct/pixiu/conf.yaml
+./pixiu gateway start -c /[absolute-path]/dubbo-go-pixiu-samples/dubbogo/simple/direct/pixiu/conf.yaml
 ```
 
 #### Try a request
