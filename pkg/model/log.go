@@ -37,6 +37,10 @@ type Log struct {
 }
 
 func (l *Log) Build() *zap.Config {
+	if l.Level == "" {
+		l.Level = "info"
+	}
+
 	lvl, err := zap.ParseAtomicLevel(l.Level)
 	if err != nil {
 		logger.Errorf("failed parse %s to zap.AtomicLevel", l.Level)
@@ -63,6 +67,10 @@ type SamplingConfig struct {
 }
 
 func (s *SamplingConfig) build() *zap.SamplingConfig {
+	if s == nil {
+		return &zap.SamplingConfig{}
+	}
+
 	return &zap.SamplingConfig{
 		Initial:    s.Initial,
 		Thereafter: s.Thereafter,
@@ -88,6 +96,10 @@ type EncoderConfig struct {
 }
 
 func (e *EncoderConfig) build() zapcore.EncoderConfig {
+	if e == nil {
+		return zapcore.EncoderConfig{}
+	}
+
 	return zapcore.EncoderConfig{
 		MessageKey:       e.MessageKey,
 		LevelKey:         e.LevelKey,
