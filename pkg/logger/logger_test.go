@@ -66,18 +66,18 @@ func TestInitLog(t *testing.T) {
 	Errorf("%s", "error")
 }
 
-func TestSetLevel(t *testing.T) {
-	err := InitLog("./log.yml")
-	assert.NoError(t, err)
-	Debug("debug")
-	Info("info")
+func TestSetLoggerLevel(t *testing.T) {
+	assert.NotNil(t, control, "control should not be nil")
 
-	assert.True(t, SetLoggerLevel("info"))
-	Debug("debug")
-	Info("info")
+	assert.True(t, SetLoggerLevel("info"), "when pass info to SetLoggerLevel, result should be true")
+	assert.True(t, SetLoggerLevel("debug"), "when pass debug to SetLoggerLevel, result should be true")
+	assert.True(t, SetLoggerLevel("error"), "when pass error to SetLoggerLevel, result should be true")
+	assert.True(t, SetLoggerLevel("panic"), "when pass panic to SetLoggerLevel, result should be true")
+	assert.True(t, SetLoggerLevel("INFO"), "when pass INFO to SetLoggerLevel, result should be true")
+	assert.True(t, SetLoggerLevel("DEbug"), "when pass DEbug to SetLoggerLevel, result should be true")
+	assert.True(t, SetLoggerLevel("ErRor"), "when pass ErRor to SetLoggerLevel, result should be true")
+	assert.True(t, SetLoggerLevel("WaRN"), "when pass WaRN to SetLoggerLevel, result should be true")
 
-	SetLogger(GetLogger().(*DubbogoPXLogger).Logger)
-	assert.False(t, SetLoggerLevel("debug"))
-	Debug("debug")
-	Info("info")
+	assert.False(t, SetLoggerLevel("i"), "when pass i to SetLoggerLevel, result should be false")
+	assert.False(t, SetLoggerLevel(""), "when pass nothing to SetLoggerLevel, result should be false")
 }

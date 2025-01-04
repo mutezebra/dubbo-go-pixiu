@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"sync"
 )
 
 import (
@@ -34,34 +33,17 @@ import (
 	"github.com/apache/dubbo-go-pixiu/pkg/common/yaml"
 )
 
-var logger Logger
+var control *controller
 
-// DubbogoPXLogger is logger struct
-type DubbogoPXLogger struct {
-	mutex sync.Mutex
-	Logger
-	dynamicLevel zap.AtomicLevel
-	// disable presents the logger state. if disable is true, the logger will write nothing
-	// the default value is false
-	disable bool
-}
-
-// Logger
-type Logger interface {
-	Info(args ...interface{})
-	Warn(args ...interface{})
-	Error(args ...interface{})
-	Debug(args ...interface{})
-
-	Infof(fmt string, args ...interface{})
-	Warnf(fmt string, args ...interface{})
-	Errorf(fmt string, args ...interface{})
-	Debugf(fmt string, args ...interface{})
+type logger struct {
+	*zap.SugaredLogger
+	config *zap.Config
 }
 
 func init() {
 	// only use in test case, so just load default config
-	if logger == nil {
+	if control == nil {
+		control = new(controller)
 		InitLogger(nil)
 	}
 }
@@ -115,36 +97,12 @@ func InitLogger(conf *zap.Config) {
 	} else {
 		zapLoggerConfig = *conf
 	}
-	zapLogger, _ := zapLoggerConfig.Build(zap.AddCallerSkip(1))
-	// logger = zapLogger.Sugar()
-	logger = &DubbogoPXLogger{Logger: zapLogger.Sugar(), dynamicLevel: zapLoggerConfig.Level}
-}
+	zapLogger, _ := zapLoggerConfig.Build(zap.AddCallerSkip(2))
+	l := &logger{zapLogger.Sugar(), &zapLoggerConfig}
 
-func SetLogger(log Logger) {
-	logger = log
-}
-
-func GetLogger() Logger {
-	return logger
+	control.updateLogger(l)
 }
 
 func SetLoggerLevel(level string) bool {
-	if l, ok := logger.(OpsLogger); ok {
-		l.SetLoggerLevel(level)
-		return true
-	}
-	return false
-}
-
-type OpsLogger interface {
-	Logger
-	// SetLoggerLevel function as name
-	SetLoggerLevel(level string)
-}
-
-// SetLoggerLevel ...
-func (dpl *DubbogoPXLogger) SetLoggerLevel(level string) {
-	l := new(zapcore.Level)
-	l.Set(level)
-	dpl.dynamicLevel.SetLevel(*l)
+	return control.setLoggerLevel(level)
 }
