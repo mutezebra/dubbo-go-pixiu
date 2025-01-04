@@ -72,7 +72,7 @@ func newTripleListenerService(lc *model.Listener, bs *model.Bootstrap) (listener
 	opts := []triConfig.OptionFunction{
 		triConfig.WithCodecType(tripleConstant.HessianCodecName),
 		triConfig.WithLocation(lc.Address.SocketAddress.GetAddress()),
-		triConfig.WithLogger(logger.GetLogger()),
+		triConfig.WithLogger(logger.GetTripleLogger()),
 		triConfig.WithProxyModeEnable(true),
 	}
 
