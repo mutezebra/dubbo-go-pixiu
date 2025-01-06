@@ -27,11 +27,12 @@ import (
 
 // logController controls log output or configuration changes throughout the project
 type logController struct {
-	logger *logger
-
 	mu sync.RWMutex
+
+	logger *logger
 }
 
+// setLoggerLevel concurrent secure change log level
 func (c *logController) setLoggerLevel(level string) bool {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -46,6 +47,7 @@ func (c *logController) setLoggerLevel(level string) bool {
 	return true
 }
 
+// updateLogger concurrent change logger object
 func (c *logController) updateLogger(l *logger) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -100,6 +102,7 @@ func (c *logController) errorf(fmt string, args ...interface{}) {
 	c.logger.Errorf(fmt, args...)
 }
 
+// parseLevel parses the level of logs
 func (c *logController) parseLevel(level string) *zap.AtomicLevel {
 	var lvl zapcore.Level
 	switch strings.ToLower(level) {
