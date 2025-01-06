@@ -33,7 +33,7 @@ import (
 	"github.com/apache/dubbo-go-pixiu/pkg/common/yaml"
 )
 
-var control *controller
+var control *logController
 
 type logger struct {
 	*zap.SugaredLogger
@@ -43,7 +43,7 @@ type logger struct {
 func init() {
 	// only use in test case, so just load default config
 	if control == nil {
-		control = new(controller)
+		control = new(logController)
 		InitLogger(nil)
 	}
 }

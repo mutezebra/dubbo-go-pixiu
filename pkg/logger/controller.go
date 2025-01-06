@@ -25,14 +25,14 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// controller controls log output or configuration changes throughout the project
-type controller struct {
+// logController controls log output or configuration changes throughout the project
+type logController struct {
 	logger *logger
 
 	mu sync.RWMutex
 }
 
-func (c *controller) setLoggerLevel(level string) bool {
+func (c *logController) setLoggerLevel(level string) bool {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	lvl := c.parseLevel(level)
@@ -46,61 +46,61 @@ func (c *controller) setLoggerLevel(level string) bool {
 	return true
 }
 
-func (c *controller) updateLogger(l *logger) {
+func (c *logController) updateLogger(l *logger) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.logger = l
 }
 
-func (c *controller) debug(args ...interface{}) {
+func (c *logController) debug(args ...interface{}) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	c.logger.Debug(args...)
 }
 
-func (c *controller) info(args ...interface{}) {
+func (c *logController) info(args ...interface{}) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	c.logger.Info(args...)
 }
 
-func (c *controller) warn(args ...interface{}) {
+func (c *logController) warn(args ...interface{}) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	c.logger.Warn(args...)
 }
 
-func (c *controller) error(args ...interface{}) {
+func (c *logController) error(args ...interface{}) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	c.logger.Error(args...)
 }
 
-func (c *controller) debugf(fmt string, args ...interface{}) {
+func (c *logController) debugf(fmt string, args ...interface{}) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	c.logger.Debugf(fmt, args...)
 }
 
-func (c *controller) infof(fmt string, args ...interface{}) {
+func (c *logController) infof(fmt string, args ...interface{}) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	c.logger.Infof(fmt, args...)
 }
 
-func (c *controller) warnf(fmt string, args ...interface{}) {
+func (c *logController) warnf(fmt string, args ...interface{}) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	c.logger.Warnf(fmt, args...)
 }
 
-func (c *controller) errorf(fmt string, args ...interface{}) {
+func (c *logController) errorf(fmt string, args ...interface{}) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	c.logger.Errorf(fmt, args...)
 }
 
-func (c *controller) parseLevel(level string) *zap.AtomicLevel {
+func (c *logController) parseLevel(level string) *zap.AtomicLevel {
 	var lvl zapcore.Level
 	switch strings.ToLower(level) {
 	case "debug":
