@@ -103,7 +103,7 @@ func InitLogger(conf *zap.Config) {
 	control.updateLogger(l)
 }
 
-// SetLoggerLevel concurrent secure change log level
+// SetLoggerLevel safely changes the log level in a concurrent manner.
 func SetLoggerLevel(level string) bool {
 	return control.setLoggerLevel(level)
 }

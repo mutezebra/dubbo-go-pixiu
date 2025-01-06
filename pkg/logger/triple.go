@@ -17,8 +17,8 @@
 
 package logger
 
-// TripleLogger does not add user-defined logger fields so that there is no pointer reference after it is updated
-// make all references point to control
+// TripleLogger does not add user-defined log fields, so there will be no pointer
+// reference issues after updates, ensuring that all references are under control.
 type TripleLogger struct {
 }
 

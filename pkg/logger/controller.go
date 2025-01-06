@@ -25,14 +25,14 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// logController controls log output or configuration changes throughout the project
+// logController governs the logging output or configuration changes throughout the entire project.
 type logController struct {
 	mu sync.RWMutex
 
 	logger *logger
 }
 
-// setLoggerLevel concurrent secure change log level
+// setLoggerLevel safely changes the log level in a concurrent manner.
 func (c *logController) setLoggerLevel(level string) bool {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -47,7 +47,7 @@ func (c *logController) setLoggerLevel(level string) bool {
 	return true
 }
 
-// updateLogger concurrent change logger object
+// updateLogger safely modifies the log object in a concurrent manner.
 func (c *logController) updateLogger(l *logger) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -102,7 +102,7 @@ func (c *logController) errorf(fmt string, args ...interface{}) {
 	c.logger.Errorf(fmt, args...)
 }
 
-// parseLevel parses the level of logs
+// parseLevel is used to parse the level of the log.
 func (c *logController) parseLevel(level string) *zap.AtomicLevel {
 	var lvl zapcore.Level
 	switch strings.ToLower(level) {
