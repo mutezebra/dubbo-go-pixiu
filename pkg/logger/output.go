@@ -17,42 +17,34 @@
 
 package logger
 
-// Info
 func Info(args ...interface{}) {
-	logger.Info(args...)
+	control.info(args...)
 }
 
-// Warn
 func Warn(args ...interface{}) {
-	logger.Warn(args...)
+	control.warn(args...)
 }
 
-// Error
 func Error(args ...interface{}) {
-	logger.Error(args...)
+	control.error(args...)
 }
 
-// Debug
 func Debug(args ...interface{}) {
-	logger.Debug(args...)
+	control.debug(args...)
 }
 
-// Infof
 func Infof(fmt string, args ...interface{}) {
-	logger.Infof(fmt, args...)
+	control.infof(fmt, args...)
 }
 
-// Warnf
 func Warnf(fmt string, args ...interface{}) {
-	logger.Warnf(fmt, args...)
+	control.warnf(fmt, args...)
 }
 
-// Errorf
 func Errorf(fmt string, args ...interface{}) {
-	logger.Errorf(fmt, args...)
+	control.errorf(fmt, args...)
 }
 
-// Debugf
 func Debugf(fmt string, args ...interface{}) {
-	logger.Debugf(fmt, args...)
+	control.debugf(fmt, args...)
 }
