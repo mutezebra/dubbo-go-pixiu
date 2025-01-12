@@ -255,6 +255,10 @@ func (m *ConfigManager) loadRemoteBootConfigs() *model.Bootstrap {
 
 // ViewRemoteConfig returns the current remote configuration.
 func (m *ConfigManager) ViewRemoteConfig() *model.Bootstrap {
+	if m.load == nil {
+		return nil
+	}
+
 	return m.load.ViewRemoteConfig()
 }
 

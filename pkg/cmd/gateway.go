@@ -111,29 +111,22 @@ type DefaultDeployer struct {
 }
 
 func (d *DefaultDeployer) initialize() error {
-	logger.Info("initialize")
 	err := initLog()
 	if err != nil {
 		logger.Warnf("[startGatewayCmd] failed to init logger, %s", err.Error())
 	}
 
-	logger.Info("initialize log success")
 	// load Bootstrap config
 	d.bootstrap = d.configManger.LoadBootConfig(configPath)
-	logger.Infof("init boot success")
 
 	initLogWithConfig(d.bootstrap)
-	fmt.Println("emmm")
-	logger.Infof("init log success")
 
 	err = initLimitCpus()
 	if err != nil {
 		logger.Errorf("[startCmd] failed to get limit cpu number, %s", err.Error())
 	}
-	logger.Infof("init cpu ?")
 
 	hotreload.StartHotReload(d.configManger, d.bootstrap)
-	logger.Infof("have started")
 
 	return err
 }
@@ -194,9 +187,7 @@ func initLog() error {
 
 func initLogWithConfig(boot *model.Bootstrap) {
 	if boot.Log != nil {
-		fmt.Println("start")
 		logger.InitLogger(boot.Log.Build())
-		fmt.Println("end")
 	}
 }
 

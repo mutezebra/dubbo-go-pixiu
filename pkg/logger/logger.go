@@ -19,7 +19,6 @@ package logger
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 )
@@ -79,7 +78,6 @@ func InitLog(logConfFile string) error {
 }
 
 func InitLogger(conf *zap.Config) {
-	log.Println("yes start")
 	var zapLoggerConfig zap.Config
 	if conf == nil {
 		zapLoggerConfig = zap.NewDevelopmentConfig()
