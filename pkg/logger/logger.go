@@ -19,6 +19,7 @@ package logger
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path"
 )
@@ -78,6 +79,7 @@ func InitLog(logConfFile string) error {
 }
 
 func InitLogger(conf *zap.Config) {
+	log.Println("yes start")
 	var zapLoggerConfig zap.Config
 	if conf == nil {
 		zapLoggerConfig = zap.NewDevelopmentConfig()
@@ -106,4 +108,9 @@ func InitLogger(conf *zap.Config) {
 // SetLoggerLevel safely changes the log level in a concurrent manner.
 func SetLoggerLevel(level string) bool {
 	return control.setLoggerLevel(level)
+}
+
+func HotReload(conf *zap.Config) error {
+	InitLogger(conf)
+	return nil
 }

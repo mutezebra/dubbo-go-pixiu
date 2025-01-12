@@ -27,9 +27,9 @@ import (
 
 import (
 	"github.com/creasty/defaults"
-	"github.com/ghodss/yaml"
 	"github.com/goinggo/mapstructure"
 	"github.com/imdario/mergo"
+	"gopkg.in/yaml.v3"
 )
 
 import (
@@ -84,7 +84,7 @@ func CheckYamlFormat(path string) bool {
 
 // LoadYAMLConfig YAMLConfigLoad config load yaml
 func LoadYAMLConfig(path string) *model.Bootstrap {
-	log.Println("load config in YAML format from : ", path)
+	logger.Info("load config in YAML format from : ", path)
 	content, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatalln("[config] [yaml load] load config failed, ", err)
@@ -251,6 +251,11 @@ func (m *ConfigManager) loadRemoteBootConfigs() *model.Bootstrap {
 	m.remoteConfig = configs
 
 	return configs
+}
+
+// ViewRemoteConfig returns the current remote configuration.
+func (m *ConfigManager) ViewRemoteConfig() *model.Bootstrap {
+	return m.load.ViewRemoteConfig()
 }
 
 func (m *ConfigManager) check() error {

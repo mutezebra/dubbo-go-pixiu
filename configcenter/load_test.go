@@ -28,7 +28,6 @@ import (
 )
 
 func getBootstrap() *model.Bootstrap {
-
 	return &model.Bootstrap{
 		Config: &model.ConfigCenter{
 			Type:   "nacos",
@@ -69,7 +68,7 @@ func TestDefaultConfigLoad_LoadConfigs(t *testing.T) {
 		boot *model.Bootstrap
 		opts []Option
 	}
-	var tests = []struct {
+	tests := []struct {
 		name    string
 		fields  fields
 		args    args
@@ -139,8 +138,8 @@ func TestDefaultConfigLoad_LoadConfigs(t *testing.T) {
 				t.Errorf("LoadConfigs() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			//assert.True(t, gotV.Nacos.DataId == DataId, "load config by nacos config center error!")
-			//assert.True(t, len(gotV.StaticResources.Listeners) > 0, "load config by nacos config center error!")
+			// assert.True(t, gotV.Nacos.DataId == DataId, "load config by nacos config center error!")
+			// assert.True(t, len(gotV.StaticResources.Listeners) > 0, "load config by nacos config center error!")
 			conf, _ := json.Marshal(gotV)
 			logger.Infof("config of Bootstrap load by nacos : %v", string(conf))
 		})

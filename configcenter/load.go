@@ -22,7 +22,7 @@ import (
 )
 
 import (
-	"github.com/ghodss/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 import (
@@ -42,6 +42,7 @@ var Parsers = map[string]func(data []byte, v interface{}) error{
 type (
 	Load interface {
 		LoadConfigs(boot *model.Bootstrap, opts ...Option) (v *model.Bootstrap, err error)
+		ViewRemoteConfig() *model.Bootstrap
 	}
 
 	Option func(opt *Options)
@@ -61,12 +62,14 @@ type DefaultConfigLoad struct {
 }
 
 func NewConfigLoad(bootConfig *model.Bootstrap) *DefaultConfigLoad {
-
 	var configClient ConfigClient
-
+	var err error
 	// config center load
 	if strings.EqualFold(bootConfig.Config.Type, KEY_CONFIG_TYPE_NACOS) {
-		configClient, _ = NewNacosConfig(bootConfig)
+		configClient, err = NewNacosConfig(bootConfig)
+		if err != nil {
+			logger.Errorf("Get new nacos config failed,err: %v", err)
+		}
 	}
 
 	if configClient == nil {
@@ -81,7 +84,6 @@ func NewConfigLoad(bootConfig *model.Bootstrap) *DefaultConfigLoad {
 }
 
 func (d *DefaultConfigLoad) LoadConfigs(boot *model.Bootstrap, opts ...Option) (v *model.Bootstrap, err error) {
-
 	var opt Options
 	for _, o := range opts {
 		o(&opt)
@@ -104,7 +106,6 @@ func (d *DefaultConfigLoad) LoadConfigs(boot *model.Bootstrap, opts ...Option) (
 	}
 
 	data, err := d.configClient.LoadConfig(m)
-
 	if err != nil {
 		return nil, err
 	}
@@ -114,9 +115,22 @@ func (d *DefaultConfigLoad) LoadConfigs(boot *model.Bootstrap, opts ...Option) (
 		return boot, err
 	}
 
-	err = Parsers[".yml"]([]byte(data), boot)
+	if err = Parsers[".yml"]([]byte(data), boot); err != nil {
+		logger.Errorf("failed to parse the configuration loaded from the remote,err: %v", err)
+		return boot, err
+	}
+
+	if err = d.configClient.ListenConfig(m); err != nil {
+		logger.Errorf("failed to listen the remote configcenter config,err: %v", err)
+		return boot, err
+	}
 
 	return boot, err
+}
+
+// ViewRemoteConfig returns the current remote configuration.
+func (d *DefaultConfigLoad) ViewRemoteConfig() *model.Bootstrap {
+	return d.configClient.ViewConfig()
 }
 
 func ParseYamlBytes(content []byte, v interface{}) error {
