@@ -18,9 +18,12 @@
 package model
 
 import (
-	"github.com/apache/dubbo-go-pixiu/pkg/logger"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+)
+
+import (
+	"github.com/apache/dubbo-go-pixiu/pkg/logger"
 )
 
 type Log struct {

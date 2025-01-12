@@ -20,7 +20,9 @@ package hotreload
 import (
 	"sync"
 	"time"
+)
 
+import (
 	"github.com/apache/dubbo-go-pixiu/pkg/common/constant"
 	"github.com/apache/dubbo-go-pixiu/pkg/config"
 	"github.com/apache/dubbo-go-pixiu/pkg/logger"

@@ -24,9 +24,14 @@ import (
 	"path"
 	"strings"
 	"testing"
+)
 
-	"github.com/apache/dubbo-go-pixiu/pkg/logger"
+import (
 	. "github.com/smartystreets/goconvey/convey"
+)
+
+import (
+	"github.com/apache/dubbo-go-pixiu/pkg/logger"
 )
 
 // isNacosRunning checks whether the Nacos server is running.

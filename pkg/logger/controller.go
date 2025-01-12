@@ -20,7 +20,9 @@ package logger
 import (
 	"strings"
 	"sync"
+)
 
+import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

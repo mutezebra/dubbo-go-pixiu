@@ -17,7 +17,9 @@
 
 package configcenter
 
-import "github.com/apache/dubbo-go-pixiu/pkg/model"
+import (
+	"github.com/apache/dubbo-go-pixiu/pkg/model"
+)
 
 type (
 	ConfigClient interface {
