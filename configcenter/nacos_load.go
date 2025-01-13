@@ -134,21 +134,21 @@ func (n *NacosConfig) ListenConfig(param map[string]interface{}) error {
 
 // onChange is the callback function triggered when the configuration changes in Nacos.
 func (n *NacosConfig) onChange(namespace, group, dataId, data string) {
-	n.mu.Lock()
-	defer n.mu.Unlock()
-
 	if len(data) == 0 {
 		logger.Errorf("Nacos listen callback data is nil. Namespace: %s, Group: %s, DataId: %s", namespace, group, dataId)
 		return
 	}
 
-	boot := new(model.Bootstrap)
-	if err := Parsers[".yml"]([]byte(data), boot); err != nil {
+	n.mu.Lock()
+	defer n.mu.Unlock()
+
+	var boot model.Bootstrap
+	if err := Parsers[".yml"]([]byte(data), &boot); err != nil {
 		logger.Errorf("Failed to parse the configuration loaded from the remote. Error: %v", err)
 		return
 	}
 
-	n.remoteConfig = boot
+	n.remoteConfig = &boot
 }
 
 // ViewConfig returns the current remote configuration.

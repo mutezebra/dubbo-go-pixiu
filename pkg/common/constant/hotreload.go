@@ -1,6 +1,8 @@
 package constant
 
-import "time"
+import (
+	"time"
+)
 
 const (
 	CheckConfigInterval = 1 * time.Second
